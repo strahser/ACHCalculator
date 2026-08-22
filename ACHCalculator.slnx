@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ACHCalculator.Core/ACHCalculator.Core.csproj" />
+  <Project Path="ACHCalculator.CLI/ACHCalculator.CLI.csproj" />
+  <Project Path="ACHCalculator.Tests/ACHCalculator.Tests.csproj" />
+</Solution>
