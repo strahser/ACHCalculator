@@ -12,6 +12,14 @@
 - `ACHCalculator.CLI` — интерактивный консольный калькулятор + справка по классам.
 - `ACHCalculator.Tests` — NUnit, порт тестов `CleanroomCalculatorTests` (30 шт.).
 
+## Синхронизация с AirHeatBalance
+
+Нормативные кратности приведены к общей базе воздушно-теплового баланса
+(`AirHeatBalance/Core/Data/roomCategories.json`, нормы 2026-10-26):
+ISO 5 (GMP A) — 240–600, ISO 6–7 — 60–240, ISO 8 (GMP D) — 20–60.
+GMP A/B = ISO 5, GMP C = ISO 7, GMP D = ISO 8.
+Источник: `ProjectsPalns/AirHeatBalance/_reference/2026-10-26_ventilation-lighting-norms.md`.
+
 ## Сборка и тесты
 
 ```

@@ -26,18 +26,20 @@ public static class AirChangeCalculator
         bool FlowSufficient
     );
 
+    // Синхронизировано с AirHeatBalance (roomCategories.json, нормы 2026-10-26):
+    // ISO 5 (GMP A) 240–600; ISO 6–7 60–240; ISO 8 (GMP D) 20–60.
     private static readonly Dictionary<string, (double MinACH, double MaxACH)> IsoAchTable = new()
     {
         ["ISO 3"] = (300, 600),
         ["ISO 4"] = (150, 300),
-        ["ISO 5"] = (60, 150),
-        ["ISO 6"] = (30, 60),
-        ["ISO 7"] = (15, 30),
-        ["ISO 8"] = (5, 15),
-        ["EU GMP A"] = (150, 300),
-        ["EU GMP B"] = (60, 150),
-        ["EU GMP C"] = (15, 30),
-        ["EU GMP D"] = (5, 15),
+        ["ISO 5"] = (240, 600),
+        ["ISO 6"] = (60, 240),
+        ["ISO 7"] = (60, 240),
+        ["ISO 8"] = (20, 60),
+        ["EU GMP A"] = (240, 600),
+        ["EU GMP B"] = (240, 600),
+        ["EU GMP C"] = (60, 240),
+        ["EU GMP D"] = (20, 60),
     };
 
     private static readonly Dictionary<string, double> IsoPressureTable = new()
@@ -45,18 +47,18 @@ public static class AirChangeCalculator
         ["ISO 3"] = 25,
         ["ISO 4"] = 20,
         ["ISO 5"] = 15,
-        ["ISO 6"] = 15,
+        ["ISO 6"] = 10,
         ["ISO 7"] = 10,
-        ["ISO 8"] = 10,
-        ["EU GMP A"] = 20,
+        ["ISO 8"] = 5,
+        ["EU GMP A"] = 15,
         ["EU GMP B"] = 15,
         ["EU GMP C"] = 10,
-        ["EU GMP D"] = 10,
+        ["EU GMP D"] = 5,
     };
 
     private static readonly Dictionary<string, string> IsoEquivalents = new()
     {
-        ["EU GMP A"] = "ISO 4-5",
+        ["EU GMP A"] = "ISO 5",
         ["EU GMP B"] = "ISO 5",
         ["EU GMP C"] = "ISO 7",
         ["EU GMP D"] = "ISO 8",

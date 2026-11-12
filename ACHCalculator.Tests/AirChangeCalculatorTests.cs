@@ -7,17 +7,31 @@ namespace ACHCalculator.Tests;
 public class AirChangeCalculatorTests
 {
     [Test]
-    public void GetRequiredACH_ISO7_Returns15()
+    public void GetRequiredACH_ISO7_Returns60()
     {
         double ach = AirChangeCalculator.GetRequiredACH("ISO 7");
-        Assert.That(ach, Is.EqualTo(15));
+        Assert.That(ach, Is.EqualTo(60));
     }
 
     [Test]
-    public void GetRequiredACH_ISO5_Returns60()
+    public void GetRequiredACH_ISO6_Returns60()
+    {
+        double ach = AirChangeCalculator.GetRequiredACH("ISO 6");
+        Assert.That(ach, Is.EqualTo(60));
+    }
+
+    [Test]
+    public void GetRequiredACH_ISO8_Returns20()
+    {
+        double ach = AirChangeCalculator.GetRequiredACH("ISO 8");
+        Assert.That(ach, Is.EqualTo(20));
+    }
+
+    [Test]
+    public void GetRequiredACH_ISO5_Returns240()
     {
         double ach = AirChangeCalculator.GetRequiredACH("ISO 5");
-        Assert.That(ach, Is.EqualTo(60));
+        Assert.That(ach, Is.EqualTo(240));
     }
 
     [Test]
@@ -56,21 +70,21 @@ public class AirChangeCalculatorTests
     }
 
     [Test]
-    public void CalculateRequiredFlow_ISO7_100sqm_3m_Returns4500()
+    public void CalculateRequiredFlow_ISO7_100sqm_3m_Returns18000()
     {
         var room = new AirChangeCalculator.RoomParameters(100, 3.0, 20, 50);
         double flow = AirChangeCalculator.CalculateRequiredFlow(room, "ISO 7");
-        // 15 ACH * 300 m³ = 4500 m³/h
-        Assert.That(flow, Is.EqualTo(4500).Within(1));
+        // 60 ACH * 300 m³ = 18 000 m³/h
+        Assert.That(flow, Is.EqualTo(18000).Within(1));
     }
 
     [Test]
-    public void CalculateRequiredFlow_ISO5_50sqm_3m_Returns9000()
+    public void CalculateRequiredFlow_ISO5_50sqm_3m_Returns36000()
     {
         var room = new AirChangeCalculator.RoomParameters(50, 3.0, 20, 50);
         double flow = AirChangeCalculator.CalculateRequiredFlow(room, "ISO 5");
-        // 60 ACH * 150 m³ = 9000 m³/h
-        Assert.That(flow, Is.EqualTo(9000).Within(1));
+        // 240 ACH * 150 m³ = 36 000 m³/h
+        Assert.That(flow, Is.EqualTo(36000).Within(1));
     }
 
     [Test]
@@ -84,13 +98,13 @@ public class AirChangeCalculatorTests
     public void Evaluate_SufficientFlow_ReturnsTrue()
     {
         var room = new AirChangeCalculator.RoomParameters(100, 3.0, 20, 50);
-        // ISO 7: 15 ACH * 300 m³ = 4500 m³/h required
-        var result = AirChangeCalculator.Evaluate(room, "ISO 7", 5000);
+        // ISO 7: 60 ACH * 300 m³ = 18 000 m³/h required
+        var result = AirChangeCalculator.Evaluate(room, "ISO 7", 20000);
 
         Assert.That(result.FlowSufficient, Is.True);
-        Assert.That(result.RequiredFlow, Is.EqualTo(4500).Within(1));
-        Assert.That(result.ActualFlow, Is.EqualTo(5000));
-        Assert.That(result.ActualACH, Is.EqualTo(5000.0 / 300).Within(0.1));
+        Assert.That(result.RequiredFlow, Is.EqualTo(18000).Within(1));
+        Assert.That(result.ActualFlow, Is.EqualTo(20000));
+        Assert.That(result.ActualACH, Is.EqualTo(20000.0 / 300).Within(0.1));
     }
 
     [Test]
@@ -100,18 +114,18 @@ public class AirChangeCalculatorTests
         var result = AirChangeCalculator.Evaluate(room, "ISO 7", 3000);
 
         Assert.That(result.FlowSufficient, Is.False);
-        Assert.That(result.RequiredFlow, Is.EqualTo(4500).Within(1));
+        Assert.That(result.RequiredFlow, Is.EqualTo(18000).Within(1));
     }
 
     [Test]
     public void Evaluate_BorderlineFlow_Within10Percent_ReturnsTrue()
     {
         var room = new AirChangeCalculator.RoomParameters(100, 3.0, 20, 50);
-        // 90% от 4500 = 4050
-        var result = AirChangeCalculator.Evaluate(room, "ISO 7", 4100);
+        // 90% от 18 000 = 16 200
+        var result = AirChangeCalculator.Evaluate(room, "ISO 7", 16200);
 
         Assert.That(result.FlowSufficient, Is.True,
-            "Запас 10% — расход 4100 >= 4050 считается достаточным");
+            "Запас 10% — расход 16 200 >= 16 200 считается достаточным");
     }
 
     [Test]
@@ -151,38 +165,38 @@ public class AirChangeCalculatorTests
     }
 
     [Test]
-    public void GetRequiredACH_EUGMPA_Returns150()
+    public void GetRequiredACH_EUGMPA_Returns240()
     {
         double ach = AirChangeCalculator.GetRequiredACH("EU GMP A");
-        Assert.That(ach, Is.EqualTo(150));
+        Assert.That(ach, Is.EqualTo(240));
     }
 
     [Test]
-    public void GetRequiredACH_EUGMPB_Returns60()
+    public void GetRequiredACH_EUGMPB_Returns240()
     {
         double ach = AirChangeCalculator.GetRequiredACH("EU GMP B");
+        Assert.That(ach, Is.EqualTo(240));
+    }
+
+    [Test]
+    public void GetRequiredACH_EUGMPC_Returns60()
+    {
+        double ach = AirChangeCalculator.GetRequiredACH("EU GMP C");
         Assert.That(ach, Is.EqualTo(60));
     }
 
     [Test]
-    public void GetRequiredACH_EUGMPC_Returns15()
-    {
-        double ach = AirChangeCalculator.GetRequiredACH("EU GMP C");
-        Assert.That(ach, Is.EqualTo(15));
-    }
-
-    [Test]
-    public void GetRequiredACH_EUGMPD_Returns5()
+    public void GetRequiredACH_EUGMPD_Returns20()
     {
         double ach = AirChangeCalculator.GetRequiredACH("EU GMP D");
-        Assert.That(ach, Is.EqualTo(5));
+        Assert.That(ach, Is.EqualTo(20));
     }
 
     [Test]
-    public void GetRecommendedPressure_EUGMPA_Returns20()
+    public void GetRecommendedPressure_EUGMPA_Returns15()
     {
         double p = AirChangeCalculator.GetRecommendedPressure("EU GMP A");
-        Assert.That(p, Is.EqualTo(20));
+        Assert.That(p, Is.EqualTo(15));
     }
 
     [Test]
@@ -200,17 +214,17 @@ public class AirChangeCalculatorTests
     }
 
     [Test]
-    public void GetRecommendedPressure_EUGMPD_Returns10()
+    public void GetRecommendedPressure_EUGMPD_Returns5()
     {
         double p = AirChangeCalculator.GetRecommendedPressure("EU GMP D");
-        Assert.That(p, Is.EqualTo(10));
+        Assert.That(p, Is.EqualTo(5));
     }
 
     [Test]
-    public void GetIsoEquivalent_EUGMPA_ReturnsISO45()
+    public void GetIsoEquivalent_EUGMPA_ReturnsISO5()
     {
         var eq = AirChangeCalculator.GetIsoEquivalent("EU GMP A");
-        Assert.That(eq, Is.EqualTo("ISO 4-5"));
+        Assert.That(eq, Is.EqualTo("ISO 5"));
     }
 
     [Test]
@@ -242,32 +256,32 @@ public class AirChangeCalculatorTests
     }
 
     [Test]
-    public void GetACHRange_EUGMPB_Returns60_150()
+    public void GetACHRange_EUGMPB_Returns240_600()
     {
         var (min, max) = AirChangeCalculator.GetACHRange("EU GMP B");
-        Assert.That(min, Is.EqualTo(60));
-        Assert.That(max, Is.EqualTo(150));
+        Assert.That(min, Is.EqualTo(240));
+        Assert.That(max, Is.EqualTo(600));
     }
 
     [Test]
     public void Evaluate_EUGMPA_SufficientFlow()
     {
         var room = new AirChangeCalculator.RoomParameters(100, 3.0, 20, 50);
-        // EU GMP A: 150 ACH * 300 m³ = 45000 m³/h
-        var result = AirChangeCalculator.Evaluate(room, "EU GMP A", 50000);
+        // EU GMP A: 240 ACH * 300 m³ = 72 000 m³/h
+        var result = AirChangeCalculator.Evaluate(room, "EU GMP A", 80000);
         Assert.That(result.FlowSufficient, Is.True);
-        Assert.That(result.RequiredFlow, Is.EqualTo(45000).Within(1));
-        Assert.That(result.PressureDiff, Is.EqualTo(20));
+        Assert.That(result.RequiredFlow, Is.EqualTo(72000).Within(1));
+        Assert.That(result.PressureDiff, Is.EqualTo(15));
     }
 
     [Test]
     public void Evaluate_EUGMPD_SufficientFlow()
     {
         var room = new AirChangeCalculator.RoomParameters(100, 3.0, 20, 50);
-        // EU GMP D: 5 ACH * 300 m³ = 1500 m³/h
-        var result = AirChangeCalculator.Evaluate(room, "EU GMP D", 1600);
+        // EU GMP D: 20 ACH * 300 m³ = 6000 m³/h
+        var result = AirChangeCalculator.Evaluate(room, "EU GMP D", 7000);
         Assert.That(result.FlowSufficient, Is.True);
-        Assert.That(result.RequiredFlow, Is.EqualTo(1500).Within(1));
+        Assert.That(result.RequiredFlow, Is.EqualTo(6000).Within(1));
     }
 
     [Test]
